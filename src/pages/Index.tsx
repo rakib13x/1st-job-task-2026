@@ -8,8 +8,37 @@ import { TeamCollaborationCard } from "@/components/dashboard/TeamCollaborationC
 import { TimeTrackerCard } from "@/components/dashboard/TimeTrackerCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useDashboardOverview } from "@/hooks/use-dashboard";
 
 const Index = () => {
+  const {
+    data: DashboardOverview,
+    isLoading,
+    isError,
+  } = useDashboardOverview();
+
+  const safeOverview = DashboardOverview ?? {
+    totalUsers: 0,
+    activeUsers: 0,
+    revenue: 0,
+    growth: 0,
+  };
+
+  const overviewItems = [
+    { label: "Total Users", value: safeOverview.totalUsers },
+    { label: "Active Users", value: safeOverview.activeUsers },
+    {
+      label: "Revenue",
+      value: safeOverview.revenue,
+      formatter: (v: number) => `$${v.toLocaleString()}`,
+    },
+    {
+      label: "Growth",
+      value: safeOverview.growth,
+      formatter: (v: number) => `${v}%`,
+    },
+  ];
+
   return (
     <DashboardShell>
       <div className="mx-auto max-w-[1200px]">
@@ -35,13 +64,16 @@ const Index = () => {
         </header>
 
         {/* KPI strip */}
+        {isError && (
+          <div className="mb-4 text-red-600">Failed to load overview data.</div>
+        )}
         <section className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-4">
-          {[
-            ["Total Projects", 24],
-            ["Ended Projects", 10],
-            ["Running Projects", 12],
-            ["Pending Project", 2],
-          ].map(([label, value], idx) => (
+          {/**
+           * Values are fetched from the dashboard API.  The response provides
+           * an "overview" object containing totalUsers, activeUsers, revenue and
+           * growth.  Until the data is received we show placeholders.
+           */}
+          {overviewItems.map(({ label, value, formatter }, idx) => (
             <Card
               key={label}
               className={
@@ -69,7 +101,9 @@ const Index = () => {
                 </span>
               </CardHeader>
               <CardContent>
-                <div className="text-4xl font-semibold">{value}</div>
+                <div className="text-4xl font-semibold">
+                  {isLoading ? "..." : formatter ? formatter(value) : value}
+                </div>
                 <div
                   className={
                     idx === 0
@@ -77,7 +111,7 @@ const Index = () => {
                       : "mt-2 text-xs text-muted-foreground transition-colors group-hover:text-primary-foreground/80"
                   }
                 >
-                  Increased from last month
+                  {isLoading ? "Loading" : "Increased from last month"}
                 </div>
               </CardContent>
             </Card>
