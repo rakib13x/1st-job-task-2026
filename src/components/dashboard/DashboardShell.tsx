@@ -1,11 +1,36 @@
 import * as React from "react";
-import { Bell, Mail, Search } from "lucide-react";
+import { Bell, Mail, Search, LogOut } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/dashboard/AppSidebar";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleLogout = () => {
+    logout();
+    toast({ title: "Signed out", description: "You have been logged out." });
+    navigate("/login");
+  };
+
+  const userInitials = user?.email
+    ? user.email.split("@")[0].substring(0, 2).toUpperCase()
+    : "TM";
+
   return (
     <SidebarProvider>
       <div className="min-h-screen w-full bg-background">
@@ -42,19 +67,33 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                   <Bell className="h-4 w-4" />
                 </button>
 
-                <div className="ml-1 flex items-center gap-3 rounded-2xl border bg-card px-3 py-2 shadow-sm">
-                  <Avatar className="h-9 w-9">
-                    <AvatarFallback className="bg-muted text-xs">
-                      TM
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="hidden leading-tight md:block">
-                    <div className="text-sm font-semibold">Totok Michael</div>
-                    <div className="text-xs text-muted-foreground">
-                      tmichael02@gmail.com
-                    </div>
-                  </div>
-                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="ml-1 flex items-center gap-3 rounded-2xl border bg-card px-3 py-2 shadow-sm hover:bg-accent cursor-pointer">
+                      <Avatar className="h-9 w-9">
+                        <AvatarFallback className="bg-muted text-xs">
+                          {userInitials}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="hidden leading-tight md:block">
+                        <div className="text-sm font-semibold">
+                          {user?.email.split("@")[0]}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {user?.email}
+                        </div>
+                      </div>
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleLogout}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Logout</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </header>
 

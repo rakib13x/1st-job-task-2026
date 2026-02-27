@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   LayoutGrid,
   CalendarDays,
@@ -21,6 +22,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 type SidebarItem = {
   title: string;
@@ -37,15 +40,24 @@ const menuItems: SidebarItem[] = [
   { title: "Team", icon: Users },
 ];
 
-const generalItems: SidebarItem[] = [
-  { title: "Settings", icon: Settings },
-  { title: "Help", icon: HelpCircle },
-  { title: "Logout", icon: LogOut },
-];
-
 export function AppSidebar() {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleLogout = () => {
+    logout();
+    toast({ title: "Signed out", description: "You have been logged out." });
+    navigate("/login");
+  };
+
+  const generalItems: SidebarItem[] = [
+    { title: "Settings", icon: Settings },
+    { title: "Help", icon: HelpCircle },
+    { title: "Logout", icon: LogOut, onClick: handleLogout },
+  ];
 
   return (
     <Sidebar
