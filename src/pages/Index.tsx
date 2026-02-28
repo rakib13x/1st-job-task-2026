@@ -41,7 +41,7 @@ const Index = () => {
 
   return (
     <DashboardShell>
-      <div className="mx-auto max-w-[1200px]">
+      <div className="mx-auto max-w-[1600px]">
         {/* Smaller header */}
         <header className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
           <div>
@@ -120,7 +120,7 @@ const Index = () => {
             className="grid grid-cols-8 grid-rows-4 gap-3"
             style={{
               gridTemplateRows: "repeat(4, minmax(0, 1fr))",
-              height: "calc(100vh - 360px)",
+              height: "calc(100vh - 340px)",
             }}
           >
             <div className="col-span-4 row-span-2">

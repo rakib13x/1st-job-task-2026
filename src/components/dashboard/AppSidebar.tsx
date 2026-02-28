@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   LayoutGrid,
   CalendarDays,
@@ -24,20 +24,22 @@ import {
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 type SidebarItem = {
   title: string;
   icon: React.ComponentType<{ className?: string }>;
   onClick?: () => void;
   badge?: string;
+  path?: string;
 };
 
 const menuItems: SidebarItem[] = [
-  { title: "Dashboard", icon: LayoutGrid },
-  { title: "Tasks", icon: CheckSquare, badge: "12" },
-  { title: "Calendar", icon: CalendarDays },
-  { title: "Analytics", icon: BarChart3 },
-  { title: "Team", icon: Users },
+  { title: "Dashboard", icon: LayoutGrid, path: "/" },
+  { title: "Tasks", icon: CheckSquare, badge: "12", path: "/tasks" },
+  { title: "Calendar", icon: CalendarDays, path: "/calendar" },
+  { title: "Analytics", icon: BarChart3, path: "/analytics" },
+  { title: "Team", icon: Users, path: "/team" },
 ];
 
 export function AppSidebar() {
@@ -45,6 +47,7 @@ export function AppSidebar() {
   const isCollapsed = state === "collapsed";
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
 
   const handleLogout = () => {
@@ -54,10 +57,53 @@ export function AppSidebar() {
   };
 
   const generalItems: SidebarItem[] = [
-    { title: "Settings", icon: Settings },
-    { title: "Help", icon: HelpCircle },
+    { title: "Settings", icon: Settings, path: "/settings" },
+    { title: "Help", icon: HelpCircle, path: "/help" },
     { title: "Logout", icon: LogOut, onClick: handleLogout },
   ];
+
+  const isActive = (path?: string) => !!path && location.pathname === path;
+
+  const renderItem = (item: SidebarItem) => {
+    const active = isActive(item.path);
+    return (
+      <SidebarMenuItem key={item.title} className="relative">
+        {active && (
+          <span
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-primary"
+            style={{
+              width: "6px",
+              height: "32px",
+              borderRadius: "0 4px 4px 0",
+            }}
+          />
+        )}
+        <SidebarMenuButton
+          onClick={item.onClick ?? (() => item.path && navigate(item.path))}
+          tooltip={item.title}
+          className={cn(
+            "mx-2 rounded-xl px-3 py-2 text-md transition-colors",
+            active
+              ? "font-semibold text-primary"
+              : "hover:bg-sidebar-accent/60",
+          )}
+        >
+          <item.icon
+            className={cn(
+              isCollapsed ? "h-4 w-4" : "mr-3 h-4 w-4",
+              active ? "text-primary" : "",
+            )}
+          />
+          {!isCollapsed && <span className="flex-1">{item.title}</span>}
+          {!isCollapsed && item.badge && (
+            <span className="rounded-md bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
+              {item.badge}
+            </span>
+          )}
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    );
+  };
 
   return (
     <Sidebar
@@ -76,74 +122,35 @@ export function AppSidebar() {
             <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary text-primary-foreground shadow-sm">
               <span className="text-sm font-semibold tracking-tight">D</span>
             </div>
-            {!isCollapsed ? (
+            {!isCollapsed && (
               <div className="leading-tight">
                 <div className="text-sm font-semibold">Donezo</div>
                 <div className="text-xs text-muted-foreground">Workspace</div>
               </div>
-            ) : null}
+            )}
           </div>
         </div>
 
         <SidebarGroup>
-          <SidebarGroupLabel className="px-4 text-[11px] font-medium tracking-wider text-muted-foreground">
+          <SidebarGroupLabel className="px-4 text-[14px] font-medium tracking-wider text-muted-foreground">
             MENU
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    onClick={item.onClick}
-                    tooltip={item.title}
-                    className="mx-2 rounded-xl px-3 py-2 text-sm hover:bg-sidebar-accent/60"
-                  >
-                    <item.icon
-                      className={isCollapsed ? "h-4 w-4" : "mr-3 h-4 w-4"}
-                    />
-                    {!isCollapsed ? (
-                      <span className="flex-1">{item.title}</span>
-                    ) : null}
-                    {!isCollapsed && item.badge ? (
-                      <span className="rounded-md bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
-                        {item.badge}
-                      </span>
-                    ) : null}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+            <SidebarMenu>{menuItems.map(renderItem)}</SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel className="px-4 text-[11px] font-medium tracking-wider text-muted-foreground">
+          <SidebarGroupLabel className="px-4 text-[14px] font-medium tracking-wider text-muted-foreground">
             GENERAL
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {generalItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    onClick={item.onClick}
-                    tooltip={item.title}
-                    className="mx-2 rounded-xl px-3 py-2 text-sm hover:bg-sidebar-accent/60"
-                  >
-                    <item.icon
-                      className={isCollapsed ? "h-4 w-4" : "mr-3 h-4 w-4"}
-                    />
-                    {!isCollapsed ? (
-                      <span className="flex-1">{item.title}</span>
-                    ) : null}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+            <SidebarMenu>{generalItems.map(renderItem)}</SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
 
-      {!isCollapsed ? (
+      {!isCollapsed && (
         <SidebarFooter className="p-4">
           <div className="rounded-2xl bg-card p-4 shadow-sm">
             <div className="text-sm font-medium">Download our</div>
@@ -156,7 +163,7 @@ export function AppSidebar() {
             </button>
           </div>
         </SidebarFooter>
-      ) : null}
+      )}
     </Sidebar>
   );
 }
