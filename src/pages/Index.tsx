@@ -42,37 +42,33 @@ const Index = () => {
   return (
     <DashboardShell>
       <div className="mx-auto max-w-[1200px]">
-        <header className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        {/* Smaller header */}
+        <header className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
           <div>
-            <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
-              Dashboard
-            </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+            <p className="mt-0.5 text-xs text-muted-foreground">
               Plan, prioritize, and accomplish your tasks with ease.
             </p>
           </div>
-
-          <div className="flex flex-wrap items-center gap-3">
-            <Button className="h-11 rounded-2xl px-5">
-              <Plus className="h-4 w-4" />
+          <div className="flex flex-wrap items-center gap-2">
+            <Button className="h-8 rounded-2xl px-4 text-sm">
+              <Plus className="h-3 w-3" />
               Add Project
             </Button>
-            <Button variant="outline" className="h-11 rounded-2xl px-5">
+            <Button variant="outline" className="h-8 rounded-2xl px-4 text-sm">
               Import Data
             </Button>
           </div>
         </header>
 
-        {/* KPI strip */}
         {isError && (
-          <div className="mb-4 text-red-600">Failed to load overview data.</div>
+          <div className="mb-2 text-red-600 text-sm">
+            Failed to load overview data.
+          </div>
         )}
-        <section className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-4">
-          {/**
-           * Values are fetched from the dashboard API.  The response provides
-           * an "overview" object containing totalUsers, activeUsers, revenue and
-           * growth.  Until the data is received we show placeholders.
-           */}
+
+        {/* KPI strip — smaller */}
+        <section className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-4">
           {overviewItems.map(({ label, value, formatter }, idx) => (
             <Card
               key={label}
@@ -118,32 +114,31 @@ const Index = () => {
           ))}
         </section>
 
-        {/* Bento grid (2 rows, equal height per row on desktop) */}
-        <section className="mt-4 space-y-4">
-          {/* Row 1 */}
-          <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-12">
-            <div className="lg:col-span-4">
+        {/* Bento grid — smaller row heights */}
+        <section className="mt-3">
+          <div
+            className="grid grid-cols-8 grid-rows-4 gap-3"
+            style={{
+              gridTemplateRows: "repeat(4, minmax(0, 1fr))",
+              height: "calc(100vh - 360px)",
+            }}
+          >
+            <div className="col-span-4 row-span-2">
               <ProjectAnalyticsCard />
             </div>
-            <div className="lg:col-span-4">
+            <div className="col-span-2 row-span-2 col-start-5">
               <RemindersCard />
             </div>
-            <div className="lg:col-span-4">
+            <div className="col-span-2 row-span-3 col-start-7">
               <ProjectListCard />
             </div>
-          </div>
-
-          {/* Row 2 */}
-          <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-12">
-            <div className="lg:col-span-4">
+            <div className="col-span-3 row-span-2 row-start-3">
               <TeamCollaborationCard />
             </div>
-
-            <div className="lg:col-span-4">
+            <div className="col-span-3 row-span-2 col-start-4 row-start-3">
               <ProjectProgressCard />
             </div>
-
-            <div className="lg:col-span-4">
+            <div className="col-span-2 col-start-7 row-start-4">
               <TimeTrackerCard />
             </div>
           </div>

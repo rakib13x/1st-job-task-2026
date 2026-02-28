@@ -1,44 +1,52 @@
-/* eslint-disable prefer-const */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useDashboardOverview } from "@/hooks/use-dashboard";
 
 export function ProjectProgressCard() {
-  // Static values for visual match; we can wire to real data later.
-  const endedPercent = 41;
+  const { data: overview, isLoading } = useDashboardOverview();
 
-  // Visual segments (sum = 100). Tuned to match the reference proportions.
-  const completed = 62;
-  const inProgress = 18;
-  const pending = 20;
+  const totalUsers = overview?.totalUsers ?? 0;
+  const activeUsers = overview?.activeUsers ?? 0;
+  const inactiveUsers = totalUsers - activeUsers;
 
-  const segments = [
-    {
-      key: "completed",
-      label: "Completed",
-      value: completed,
-      stroke: "hsl(var(--primary) / 0.85)",
-    },
-    {
-      key: "inProgress",
-      label: "In Progress",
-      value: inProgress,
-      stroke: "hsl(var(--primary))",
-    },
-    {
-      key: "pending",
-      label: "Pending",
-      value: pending,
-      stroke: "url(#pendingHatch)",
-    },
-  ] as const;
+  const activePercent = totalUsers
+    ? Math.round((activeUsers / totalUsers) * 100)
+    : 0;
+  const inactivePercent = totalUsers
+    ? Math.round((inactiveUsers / totalUsers) * 100)
+    : 0;
 
-  // Recharts-like dash technique for SVG arcs.
-  let start = 0;
+  const cx = 120;
+  const cy = 120;
+  const r = 80;
+  const strokeW = 30;
+  const strokeR = strokeW / 2;
+
+  const polar = (angleDeg: number) => {
+    const a = (Math.PI / 180) * angleDeg;
+    return { x: cx + r * Math.cos(a), y: cy - r * Math.sin(a) };
+  };
+
+  const arc = (startDeg: number, endDeg: number) => {
+    const s = polar(startDeg);
+    const e = polar(endDeg);
+    const largeArcFlag = Math.abs(endDeg - startDeg) <= 180 ? "0" : "1";
+    return `M ${s.x} ${s.y} A ${r} ${r} 0 ${largeArcFlag} 1 ${e.x} ${e.y}`;
+  };
+
+  // a0=180 (far left) → activeUsers → inactiveUsers → a3=0 (far right)
+  const a0 = 180;
+  const a1 = 180 - (180 * activePercent) / 100;
+  const a2 = a1 - (180 * inactivePercent) / 100;
+  const a3 = 0;
+
+  // Only need the two outermost edge points for the outward caps
+  const p0 = polar(a0); // far left  → outward cap for activeUsers
+  const p3 = polar(a3); // far right → outward cap for inactiveUsers
 
   return (
     <Card className="shadow-sm h-full flex flex-col">
       <CardHeader className="pb-2">
-        <CardTitle className="text-base">Project Progress</CardTitle>
+        <CardTitle className="text-base">User Overview</CardTitle>
       </CardHeader>
       <CardContent className="flex-1">
         <div className="flex h-full flex-col items-center justify-between gap-4">
@@ -46,11 +54,11 @@ export function ProjectProgressCard() {
             <svg
               viewBox="0 0 240 150"
               className="h-auto w-full"
-              aria-label="Project progress gauge"
+              aria-label="User overview gauge"
             >
               <defs>
                 <pattern
-                  id="pendingHatch"
+                  id="inactiveHatch"
                   patternUnits="userSpaceOnUse"
                   width="10"
                   height="10"
@@ -66,16 +74,6 @@ export function ProjectProgressCard() {
                     strokeWidth="3"
                   />
                 </pattern>
-
-                {/* Only show the OUTER half of round caps (cuts off the inner half cleanly). */}
-                <clipPath id="outerOnlyCapClip">
-                  <path
-                    d={`M 0 0 H 240 V 150 H 0 Z M 120 120 m -66 0 a 66 66 0 1 0 132 0 a 66 66 0 1 0 -132 0`}
-                    fillRule="evenodd"
-                  />
-                </clipPath>
-
-                {/* subtle inner shadow feel */}
                 <filter
                   id="softShadow"
                   x="-20%"
@@ -93,112 +91,62 @@ export function ProjectProgressCard() {
                 </filter>
               </defs>
 
-              {/* Base track */}
+              {/* 1. Base track — full semicircle muted */}
               <path
-                d="M 40 120 A 80 80 0 0 1 200 120"
-                pathLength={100}
+                d={arc(a0, a3)}
                 fill="none"
                 stroke="hsl(var(--muted) / 0.55)"
-                strokeWidth={30}
+                strokeWidth={strokeW}
                 strokeLinecap="butt"
                 filter="url(#softShadow)"
               />
 
-              {/* Segments (true arc paths) */}
-              {(() => {
-                const cx = 120;
-                const cy = 120;
-                const r = 80;
-                const strokeW = 30;
-                const strokeR = strokeW / 2;
+              {/* 2. Inactive users segment — butt both ends */}
+              <path
+                d={arc(a1, a2)}
+                fill="none"
+                stroke="url(#inactiveHatch)"
+                strokeWidth={strokeW}
+                strokeLinecap="butt"
+              />
 
-                const polar = (angleDeg: number) => {
-                  const a = (Math.PI / 180) * angleDeg;
-                  // Inverted y so 180→0 draws the TOP half.
-                  return { x: cx + r * Math.cos(a), y: cy - r * Math.sin(a) };
-                };
+              {/* 3. Active users segment — butt both ends, drawn on top */}
+              <path
+                d={arc(a0, a1)}
+                fill="none"
+                stroke="hsl(var(--primary))"
+                strokeWidth={strokeW}
+                strokeLinecap="butt"
+              />
 
-                const arc = (startDeg: number, endDeg: number) => {
-                  const start = polar(startDeg);
-                  const end = polar(endDeg);
-                  const largeArcFlag =
-                    Math.abs(endDeg - startDeg) <= 180 ? "0" : "1";
-                  return `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArcFlag} 1 ${end.x} ${end.y}`;
-                };
-
-                // Semi-circle goes from 180deg (left) to 0deg (right).
-                const total = 180;
-                const a0 = 180;
-                const a1 = 180 - (total * completed) / 100;
-                const a2 = a1 - (total * inProgress) / 100;
-                const a3 = 0;
-
-                const p0 = polar(a0);
-                const p2 = polar(a2);
-                const p3 = polar(a3);
-
-                // Outer-only cap via clipping (no inward bulge).
-                const capClip = "url(#outerOnlyCapClip)";
-
-                return (
-                  <>
-                    {/* Flat joins everywhere (no inward rounding at boundaries). */}
-                    <path
-                      d={arc(a0, a1)}
-                      fill="none"
-                      stroke="hsl(var(--primary) / 0.85)"
-                      strokeWidth={strokeW}
-                      strokeLinecap="butt"
-                    />
-                    <path
-                      d={arc(a1, a2)}
-                      fill="none"
-                      stroke="hsl(var(--primary))"
-                      strokeWidth={strokeW}
-                      strokeLinecap="butt"
-                    />
-                    <path
-                      d={arc(a2, a3)}
-                      fill="none"
-                      stroke="url(#pendingHatch)"
-                      strokeWidth={strokeW}
-                      strokeLinecap="butt"
-                    />
-
-                    {/* Outer-only rounded caps (clipped so they never round inward). */}
-                    <g clipPath={capClip}>
-                      <circle
-                        cx={p0.x}
-                        cy={p0.y}
-                        r={strokeR}
-                        fill="hsl(var(--primary) / 0.85)"
-                      />
-                      <circle
-                        cx={p2.x}
-                        cy={p2.y}
-                        r={strokeR}
-                        fill="hsl(var(--primary))"
-                      />
-                      <circle
-                        cx={p3.x}
-                        cy={p3.y}
-                        r={strokeR}
-                        fill="url(#pendingHatch)"
-                      />
-                    </g>
-                  </>
-                );
-              })()}
+              {/* 
+                Only 2 manual circles — one at each outer edge.
+                NO circle at a1 or a2 (the inner boundaries) — that's what was causing the blobs.
+              */}
+              {/* Outward cap: far left of active users arc */}
+              <circle
+                cx={p0.x}
+                cy={p0.y}
+                r={strokeR}
+                fill="hsl(var(--primary))"
+              />
+              {/* Outward cap: far right of inactive users arc */}
+              <circle
+                cx={p3.x}
+                cy={p3.y}
+                r={strokeR}
+                fill="url(#inactiveHatch)"
+              />
             </svg>
 
             {/* Center label */}
             <div className="pointer-events-none absolute inset-0 grid place-items-center">
               <div className="text-center translate-y-7">
                 <div className="text-5xl font-semibold tracking-tight leading-none">
-                  {endedPercent}%
+                  {isLoading ? "..." : `${activePercent}%`}
                 </div>
                 <div className="mt-1 text-xs text-muted-foreground">
-                  Project Ended
+                  Active Users
                 </div>
               </div>
             </div>
@@ -209,16 +157,18 @@ export function ProjectProgressCard() {
             <div className="flex items-center gap-2">
               <span
                 className="h-2.5 w-2.5 rounded-full"
-                style={{ backgroundColor: "hsl(var(--primary) / 0.85)" }}
+                style={{ backgroundColor: "hsl(var(--primary))" }}
               />
-              <span>Completed</span>
+              <span>Active Users</span>
             </div>
             <div className="flex items-center gap-2">
               <span
                 className="h-2.5 w-2.5 rounded-full"
-                style={{ backgroundColor: "hsl(var(--primary))" }}
+                style={{
+                  backgroundColor: "hsl(var(--muted-foreground) / 0.4)",
+                }}
               />
-              <span>In Progress</span>
+              <span>Total Users</span>
             </div>
             <div className="flex items-center gap-2">
               <span
@@ -229,7 +179,7 @@ export function ProjectProgressCard() {
                     "repeating-linear-gradient(45deg, hsl(var(--muted-foreground)) 0 2px, transparent 2px 6px)",
                 }}
               />
-              <span>Pending</span>
+              <span>Inactive Users</span>
             </div>
           </div>
         </div>

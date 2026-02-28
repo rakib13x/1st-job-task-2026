@@ -116,15 +116,18 @@ export function ProjectAnalyticsCard() {
 
   return (
     <Card className="shadow-sm h-full flex flex-col">
-      <CardHeader>
-        <CardTitle className="text-base">Project Analytics</CardTitle>
+      <CardHeader className="pb-0 pt-3 px-4">
+        <CardTitle className="text-sm">Project Analytics</CardTitle>
       </CardHeader>
-      <CardContent className="flex-1">
-        <ChartContainer config={chartConfig} className="h-full min-h-56 w-full">
+      <CardContent className="flex-1 overflow-hidden p-2">
+        <ChartContainer
+          config={chartConfig}
+          className="h-full w-full overflow-hidden"
+        >
           <ResponsiveContainer>
             <BarChart
               data={data}
-              margin={{ left: 8, right: 8, top: 18, bottom: 6 }}
+              margin={{ left: 4, right: 4, top: 24, bottom: 0 }}
             >
               <defs>
                 <pattern
@@ -150,8 +153,9 @@ export function ProjectAnalyticsCard() {
                 dataKey="day"
                 tickLine={false}
                 axisLine={false}
-                tickMargin={12}
+                tickMargin={6}
                 className="text-muted-foreground"
+                style={{ fontSize: 11 }}
               />
               <YAxis hide domain={[0, 100]} />
 
@@ -169,7 +173,7 @@ export function ProjectAnalyticsCard() {
                 }}
               />
 
-              <Bar dataKey="value" shape={<PillBarShape />} barSize={44}>
+              <Bar dataKey="value" shape={<PillBarShape />} barSize={70}>
                 <LabelList dataKey="value" content={<HighlightLabel />} />
               </Bar>
             </BarChart>

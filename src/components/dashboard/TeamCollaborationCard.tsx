@@ -36,7 +36,7 @@ export function TeamCollaborationCard() {
         </Button>
       </CardHeader>
 
-      <CardContent className="flex-1">
+      <CardContent className="flex-1 overflow-hidden">
         {isError && (
           <div className="text-red-600">Failed to load team members.</div>
         )}
