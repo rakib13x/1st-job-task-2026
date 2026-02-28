@@ -27,28 +27,35 @@ function initials(name: string) {
 export function TeamCollaborationCard() {
   const { data: users = [], isLoading, isError } = useDashboardUsers();
 
+  const visibleUsers = users.slice(0, 4);
+
   return (
     <Card className="shadow-sm h-full flex flex-col">
-      <CardHeader className="flex-row items-center justify-between space-y-0">
-        <CardTitle className="text-base">Team Collaboration</CardTitle>
-        <Button variant="outline" size="sm" className="h-9 rounded-xl">
+      <CardHeader className="flex-row items-center justify-between space-y-0 pb-2 pt-3 px-4">
+        <CardTitle className="text-sm">Team Collaboration</CardTitle>
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-7 rounded-xl text-xs px-3"
+        >
           + Add Member
         </Button>
       </CardHeader>
-
-      <CardContent className="flex-1 overflow-hidden">
+      <CardContent className="flex-1 overflow-hidden px-4 pb-3">
         {isError && (
-          <div className="text-red-600">Failed to load team members.</div>
+          <div className="text-red-600 text-xs">
+            Failed to load team members.
+          </div>
         )}
-        <div className="space-y-3">
+        <div className="flex flex-col gap-2 h-full">
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
                 <div
                   key={i}
-                  className="h-12 animate-pulse rounded-2xl bg-muted"
+                  className="h-10 animate-pulse rounded-xl bg-muted"
                 />
               ))
-            : users.map((u) => {
+            : visibleUsers.map((u) => {
                 const meta = statusMeta[u.status] || {
                   label: u.status,
                   className: "",
@@ -56,23 +63,21 @@ export function TeamCollaborationCard() {
                 return (
                   <div
                     key={u.id}
-                    className="flex items-center gap-3 rounded-2xl border bg-card px-3 py-2.5"
+                    className="flex items-center gap-2 rounded-xl border bg-card px-3 py-2 flex-1"
                   >
-                    <Avatar className="h-10 w-10">
-                      <AvatarFallback className="text-xs font-semibold">
+                    <Avatar className="h-7 w-7 shrink-0">
+                      <AvatarFallback className="text-[10px] font-semibold">
                         {initials(u.name)}
                       </AvatarFallback>
                     </Avatar>
-
                     <div className="min-w-0 flex-1">
-                      <div className="truncate text-sm font-semibold leading-none">
+                      <div className="truncate text-xs font-semibold leading-none">
                         {u.name}
                       </div>
-                      <div className="mt-1 truncate text-[11px] text-muted-foreground">
+                      <div className="mt-0.5 truncate text-[10px] text-muted-foreground">
                         {u.email}
                       </div>
                     </div>
-
                     <Badge
                       variant="outline"
                       className={
