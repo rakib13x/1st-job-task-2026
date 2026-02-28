@@ -9,7 +9,7 @@ All colors MUST be HSL.
 @layer base {
   :root {
     /* Light (dashboard) */
-    --background: 210 33% 98%;
+    --background: 220 15% 94%;
     --foreground: 210 24% 12%;
 
     --card: 0 0% 100%;
@@ -47,7 +47,7 @@ All colors MUST be HSL.
     --radius: 1rem;
 
     /* Sidebar */
-    --sidebar-background: 0 0% 100%;
+    --sidebar-background: 220 15% 94%;
     --sidebar-foreground: 210 20% 18%;
     --sidebar-primary: 156 46% 26%;
     --sidebar-primary-foreground: 0 0% 100%;

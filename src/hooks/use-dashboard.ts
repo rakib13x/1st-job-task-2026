@@ -38,9 +38,12 @@ export interface DashboardResponse {
   products: DashboardProduct[];
 }
 
+const API_BASE =
+  import.meta.env.VITE_API_BASE ?? "https://task-api-eight-flax.vercel.app";
+
 const fetchDashboard = async (): Promise<DashboardResponse> => {
   const { data } = await axios.get<DashboardResponse>(
-    "https://task-api-eight-flax.vercel.app/api/dashboard",
+    `${API_BASE}/api/dashboard`,
   );
   return data;
 };

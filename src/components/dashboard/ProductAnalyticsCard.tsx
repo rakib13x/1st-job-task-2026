@@ -108,7 +108,7 @@ function HighlightLabel(props: any) {
   );
 }
 
-export function ProjectAnalyticsCard() {
+export function ProductAnalyticsCard() {
   const highlightIndex = React.useMemo(
     () => data.findIndex((d) => d.variant === "highlight"),
     [],
@@ -117,7 +117,7 @@ export function ProjectAnalyticsCard() {
   return (
     <Card className="shadow-sm h-full flex flex-col">
       <CardHeader className="pb-0 pt-3 px-4">
-        <CardTitle className="text-sm">Project Analytics</CardTitle>
+        <CardTitle className="text-sm">Product Analytics</CardTitle>
       </CardHeader>
       <CardContent className="flex-1 overflow-hidden p-2">
         <ChartContainer

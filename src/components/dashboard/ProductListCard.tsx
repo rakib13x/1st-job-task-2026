@@ -10,7 +10,7 @@ import {
 // we reuse the same icon set; choose one arbitrarily or by category later
 const DefaultIcon = Sparkles;
 
-export function ProjectListCard() {
+export function ProductListCard() {
   const { data: products = [], isLoading, isError } = useDashboardProducts();
 
   return (

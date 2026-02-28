@@ -25,6 +25,7 @@ import {
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
 
 type SidebarItem = {
   title: string;
@@ -152,15 +153,39 @@ export function AppSidebar() {
 
       {!isCollapsed && (
         <SidebarFooter className="p-4">
-          <div className="rounded-2xl bg-card p-4 shadow-sm">
-            <div className="text-sm font-medium">Download our</div>
-            <div className="text-sm font-medium">Mobile App</div>
-            <div className="mt-3 text-xs text-muted-foreground">
-              Get easy on another way.
+          <div className="relative overflow-hidden rounded-2xl bg-primary text-primary-foreground">
+            {/* Same background texture as TimeTrackerCard */}
+            <div
+              aria-hidden="true"
+              className="absolute inset-0"
+              style={{
+                backgroundImage:
+                  "linear-gradient(160deg, hsl(var(--primary) / 0.98) 0%, hsl(var(--primary) / 0.72) 45%, hsl(var(--primary) / 0.96) 100%)," +
+                  "radial-gradient(900px 480px at 85% 18%, hsl(var(--primary-foreground) / 0.18), transparent 62%)," +
+                  "radial-gradient(700px 420px at 15% 92%, hsl(var(--foreground) / 0.22), transparent 58%)," +
+                  "repeating-radial-gradient(circle at 70% 35%, hsl(var(--primary-foreground) / 0.12) 0 5px, transparent 5px 16px)",
+              }}
+            />
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_0%,transparent_40%,hsl(var(--foreground)/0.20)_100%)]"
+            />
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 bg-gradient-to-b from-background/0 via-background/0 to-foreground/20"
+            />
+
+            {/* Content */}
+            <div className="relative px-4 py-4">
+              <div className="text-sm font-semibold">Download our</div>
+              <div className="text-sm font-semibold">Mobile App</div>
+              <div className="mt-2 text-xs text-primary-foreground/70">
+                Get easy on another way.
+              </div>
+              <Button className="mt-4 w-full rounded-full  border border-primary-foreground/20 px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-green-700 transition-colors">
+                Download
+              </Button>
             </div>
-            <button className="mt-4 w-full rounded-xl bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
-              Download
-            </button>
           </div>
         </SidebarFooter>
       )}

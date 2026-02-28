@@ -1,10 +1,10 @@
 import { ArrowUpRight, Plus } from "lucide-react";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
-import { ProjectAnalyticsCard } from "@/components/dashboard/ProjectAnalyticsCard";
-import { ProjectListCard } from "@/components/dashboard/ProjectListCard";
-import { ProjectProgressCard } from "@/components/dashboard/ProjectProgressCard";
+import { ProductAnalyticsCard } from "@/components/dashboard/ProductAnalyticsCard";
+import { ProductListCard } from "@/components/dashboard/ProductListCard";
+import { UserProgressCard } from "@/components/dashboard/UserProgressCard";
 import { RemindersCard } from "@/components/dashboard/RemindersCard";
-import { TeamCollaborationCard } from "@/components/dashboard/TeamCollaborationCard";
+import { UsersListCard } from "@/components/dashboard/UsersListCard";
 import { TimeTrackerCard } from "@/components/dashboard/TimeTrackerCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,16 +41,19 @@ const Index = () => {
         {/* Header */}
         <header className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+            <h1 className="text-4xl font-semibold tracking-tight">Dashboard</h1>
             <p className="mt-0.5 text-xs text-muted-foreground">
               Plan, prioritize, and accomplish your tasks with ease.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <Button className="h-8 rounded-2xl px-4 text-sm">
+            <Button className="h-12 rounded-full px-4 text-sm ">
               <Plus className="h-3 w-3" /> Add Project
             </Button>
-            <Button variant="outline" className="h-8 rounded-2xl px-4 text-sm">
+            <Button
+              variant="outline"
+              className="h-12 rounded-full px-4 text-sm border-2 border-green-700"
+            >
               Import Data
             </Button>
           </div>
@@ -116,19 +119,19 @@ const Index = () => {
             }}
           >
             <div className="col-span-4 row-span-2">
-              <ProjectAnalyticsCard />
+              <ProductAnalyticsCard />
             </div>
             <div className="col-span-2 row-span-2 col-start-5">
               <RemindersCard />
             </div>
             <div className="col-span-2 row-span-3 col-start-7">
-              <ProjectListCard />
+              <ProductListCard />
             </div>
             <div className="col-span-3 row-span-2 row-start-3">
-              <TeamCollaborationCard />
+              <UsersListCard />
             </div>
             <div className="col-span-3 row-span-2 col-start-4 row-start-3">
-              <ProjectProgressCard />
+              <UserProgressCard />
             </div>
             <div className="col-span-2 col-start-7 row-start-4">
               <TimeTrackerCard />
@@ -137,7 +140,7 @@ const Index = () => {
           {/* Mobile layout */}
           <div className="flex flex-col gap-3 lg:hidden">
             <div className="h-[280px]">
-              <ProjectAnalyticsCard />
+              <ProductAnalyticsCard />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="h-[220px]">
@@ -148,13 +151,13 @@ const Index = () => {
               </div>
             </div>
             <div className="h-[320px]">
-              <ProjectListCard />
+              <ProductListCard />
             </div>
             <div className="h-[280px]">
-              <TeamCollaborationCard />
+              <UsersListCard />
             </div>
             <div className="h-[280px]">
-              <ProjectProgressCard />
+              <UserProgressCard />
             </div>
           </div>
         </section>

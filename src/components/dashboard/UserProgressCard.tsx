@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useDashboardOverview } from "@/hooks/use-dashboard";
 
-export function ProjectProgressCard() {
+export function UserProgressCard() {
   const { data: overview, isLoading } = useDashboardOverview();
 
   const totalUsers = overview?.totalUsers ?? 0;
@@ -33,15 +33,13 @@ export function ProjectProgressCard() {
     return `M ${s.x} ${s.y} A ${r} ${r} 0 ${largeArcFlag} 1 ${e.x} ${e.y}`;
   };
 
-  // a0=180 (far left) → activeUsers → inactiveUsers → a3=0 (far right)
   const a0 = 180;
   const a1 = 180 - (180 * activePercent) / 100;
   const a2 = a1 - (180 * inactivePercent) / 100;
   const a3 = 0;
 
-  // Only need the two outermost edge points for the outward caps
-  const p0 = polar(a0); // far left  → outward cap for activeUsers
-  const p3 = polar(a3); // far right → outward cap for inactiveUsers
+  const p0 = polar(a0);
+  const p3 = polar(a3);
 
   return (
     <Card className="shadow-sm h-full flex flex-col">

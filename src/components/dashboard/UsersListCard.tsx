@@ -24,7 +24,7 @@ function initials(name: string) {
   return (a + b).toUpperCase();
 }
 
-export function TeamCollaborationCard() {
+export function UsersListCard() {
   const { data: users = [], isLoading, isError } = useDashboardUsers();
 
   const visibleUsers = users.slice(0, 4);
@@ -32,13 +32,13 @@ export function TeamCollaborationCard() {
   return (
     <Card className="shadow-sm h-full flex flex-col">
       <CardHeader className="flex-row items-center justify-between space-y-0 pb-2 pt-3 px-4">
-        <CardTitle className="text-sm">Team Collaboration</CardTitle>
+        <CardTitle className="text-sm">User List</CardTitle>
         <Button
           variant="outline"
           size="sm"
           className="h-7 rounded-xl text-xs px-3"
         >
-          + Add Member
+          + Add User
         </Button>
       </CardHeader>
       <CardContent className="flex-1 overflow-hidden px-4 pb-3">

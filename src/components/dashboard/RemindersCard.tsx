@@ -12,10 +12,10 @@ export function RemindersCard() {
       <CardContent className="flex-1">
         <div className="flex h-full flex-col justify-between gap-4">
           <div>
-            <div className="text-sm font-semibold leading-tight">
+            <div className="text-3xl font-semibold leading-tight bg-gradient-to-r from-primary to-primary/50 bg-clip-text text-transparent">
               Meeting with Arc Company
             </div>
-            <div className="mt-1 text-xs text-muted-foreground">
+            <div className="mt-1 text-lg text-muted-foreground">
               Time: 02.00 pm - 04.00 pm
             </div>
           </div>
