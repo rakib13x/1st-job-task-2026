@@ -9,21 +9,18 @@ import { TimeTrackerCard } from "@/components/dashboard/TimeTrackerCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useDashboardOverview } from "@/hooks/use-dashboard";
-
 const Index = () => {
   const {
     data: DashboardOverview,
     isLoading,
     isError,
   } = useDashboardOverview();
-
   const safeOverview = DashboardOverview ?? {
     totalUsers: 0,
     activeUsers: 0,
     revenue: 0,
     growth: 0,
   };
-
   const overviewItems = [
     { label: "Total Users", value: safeOverview.totalUsers },
     { label: "Active Users", value: safeOverview.activeUsers },
@@ -38,11 +35,10 @@ const Index = () => {
       formatter: (v: number) => `${v}%`,
     },
   ];
-
   return (
     <DashboardShell>
       <div className="mx-auto max-w-[1600px]">
-        {/* Smaller header */}
+        {/* Header */}
         <header className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
@@ -52,22 +48,19 @@ const Index = () => {
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Button className="h-8 rounded-2xl px-4 text-sm">
-              <Plus className="h-3 w-3" />
-              Add Project
+              <Plus className="h-3 w-3" /> Add Project
             </Button>
             <Button variant="outline" className="h-8 rounded-2xl px-4 text-sm">
               Import Data
             </Button>
           </div>
         </header>
-
         {isError && (
           <div className="mb-2 text-red-600 text-sm">
             Failed to load overview data.
           </div>
         )}
-
-        {/* KPI strip — smaller */}
+        {/* KPI strip */}
         <section className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-4">
           {overviewItems.map(({ label, value, formatter }, idx) => (
             <Card
@@ -113,11 +106,10 @@ const Index = () => {
             </Card>
           ))}
         </section>
-
-        {/* Bento grid — smaller row heights */}
+        {/* Bento grid — desktop */}
         <section className="mt-3">
           <div
-            className="grid grid-cols-8 grid-rows-4 gap-3"
+            className="hidden lg:grid grid-cols-8 grid-rows-4 gap-3"
             style={{
               gridTemplateRows: "repeat(4, minmax(0, 1fr))",
               height: "calc(100vh - 340px)",
@@ -142,10 +134,32 @@ const Index = () => {
               <TimeTrackerCard />
             </div>
           </div>
+          {/* Mobile layout */}
+          <div className="flex flex-col gap-3 lg:hidden">
+            <div className="h-[280px]">
+              <ProjectAnalyticsCard />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="h-[220px]">
+                <RemindersCard />
+              </div>
+              <div className="h-[220px]">
+                <TimeTrackerCard />
+              </div>
+            </div>
+            <div className="h-[320px]">
+              <ProjectListCard />
+            </div>
+            <div className="h-[280px]">
+              <TeamCollaborationCard />
+            </div>
+            <div className="h-[280px]">
+              <ProjectProgressCard />
+            </div>
+          </div>
         </section>
       </div>
     </DashboardShell>
   );
 };
-
 export default Index;

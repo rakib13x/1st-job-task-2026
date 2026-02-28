@@ -161,7 +161,6 @@ export function ProjectAnalyticsCard() {
 
               <Tooltip
                 cursor={false}
-                defaultIndex={highlightIndex >= 0 ? highlightIndex : undefined}
                 content={({ active, payload }) => {
                   if (!active || !payload?.length) return null;
                   const p = payload[0]?.payload as DayDatum;
